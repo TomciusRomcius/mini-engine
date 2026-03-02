@@ -1,9 +1,10 @@
 #include <iostream>
-#include "vbo.h"
-#include "../core/src/vbo.h"
+
+#include "Application.h"
+#include "VBO.h"
+#include "../core/src/VBO.h"
 
 int main() {
-    std::cout << "Hello world!";
-    VBO vbo;
+    mini_engine::Application app;
     return 0;
 }
