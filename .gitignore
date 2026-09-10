@@ -1,3 +1,5 @@
 .idea
 /build
 /cmake-build-debug
+/vcpkg_installed
+CMakeUserPresets.json
