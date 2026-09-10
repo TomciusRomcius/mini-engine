@@ -13,6 +13,12 @@ add_library(core STATIC
         src/Program.h
         src/Debugging.cpp
         src/Debugging.h
+        src/ecs/Component.h
+        src/ecs/Entity.h
+        src/ecs/ECSContainer.cpp
+        src/ecs/ECSContainer.h
+        src/ecs/Scene.cpp
+        src/ecs/Scene.h
 )
 
 target_include_directories(core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
