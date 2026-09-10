@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Debugging.h"
+#include "EBO.h"
 #include "Program.h"
 #include "VAO.h"
 
@@ -31,13 +32,20 @@ namespace mini_engine {
         std::vector<float> vertices = {
             -0.5f, -0.5f, 0.0f,
              0.5f, -0.5f, 0.0f,
-             0.0f,  0.5f, 0.0f,
+             0.5f,  0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f,
+        };
+
+        std::vector<uint32_t> indices = {
+            0, 1, 2,
+            0, 2, 3,
         };
 
         const AttributeMemory mem(vertices.data(), GL_FLOAT, vertices.size(), 3, false);
         const VBO vbo({mem});
         vbo.bind();
         const VAO vao({mem});
+        const EBO ebo(indices);
         const Shader vert(GL_VERTEX_SHADER, "shaders/simple.vert");
         const Shader frag(GL_FRAGMENT_SHADER, "shaders/simple.frag");
         const Program program(
@@ -51,7 +59,7 @@ namespace mini_engine {
             program.bind();
             vao.bind();
 
-            glCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+            glCall(glDrawElements(GL_TRIANGLES, ebo.getCount(), GL_UNSIGNED_INT, nullptr));
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

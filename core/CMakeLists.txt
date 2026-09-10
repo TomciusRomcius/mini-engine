@@ -1,6 +1,8 @@
 add_library(core STATIC
         src/VBO.cpp
         src/VBO.h
+        src/EBO.cpp
+        src/EBO.h
         src/VAO.cpp
         src/VAO.h
         src/AttributeMemory.cpp
