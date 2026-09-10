@@ -18,8 +18,8 @@ namespace mini_engine {
         GLint prevSize = 0;
         for (auto &attr: attributes) {
             auto bytes = attr.getData();
-            glCall(glBufferSubData(GL_ARRAY_BUFFER, prevSize, 9 * sizeof(float), attr.getData()));
-            prevSize = attr.getSizeBytes();
+            glCall(glBufferSubData(GL_ARRAY_BUFFER, prevSize, attr.getSizeBytes(), attr.getData()));
+            prevSize += attr.getSizeBytes();
         }
         glCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
     }
