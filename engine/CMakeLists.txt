@@ -10,7 +10,7 @@ add_executable(engine
         components/SceneCamera.h)
 
 target_include_directories(engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(engine PRIVATE core glm::glm)
+target_link_libraries(engine PRIVATE core glm::glm imgui::imgui)
 
 add_custom_command(
         TARGET engine POST_BUILD
