@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include <functional>
 
 // Third-party
 #include <GL/glew.h>

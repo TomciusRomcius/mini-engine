@@ -14,6 +14,7 @@ add_library(core STATIC
         src/Debugging.cpp
         src/Debugging.h
         src/ecs/Component.h
+        src/ecs/Property.h
         src/ecs/Entity.h
         src/ecs/ECSContainer.cpp
         src/ecs/ECSContainer.h
