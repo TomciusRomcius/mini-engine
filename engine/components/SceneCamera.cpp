@@ -14,56 +14,11 @@
 namespace mini_engine {
     namespace {
         const bool g_SceneCameraPropertiesRegistered = [] {
-            Component::addProperty<SceneCamera>(
-                "fovDegrees",
-                "float",
-                [](Component *component) {
-                    return static_cast<SceneCamera *>(component)->fovDegrees;
-                },
-                [](Component *component, const std::any &value) {
-                    static_cast<SceneCamera *>(component)->fovDegrees = std::any_cast<float>(value);
-                });
-
-            Component::addProperty<SceneCamera>(
-                "nearPlane",
-                "float",
-                [](Component *component) {
-                    return static_cast<SceneCamera *>(component)->nearPlane;
-                },
-                [](Component *component, const std::any &value) {
-                    static_cast<SceneCamera *>(component)->nearPlane = std::any_cast<float>(value);
-                });
-
-            Component::addProperty<SceneCamera>(
-                "farPlane",
-                "float",
-                [](Component *component) {
-                    return static_cast<SceneCamera *>(component)->farPlane;
-                },
-                [](Component *component, const std::any &value) {
-                    static_cast<SceneCamera *>(component)->farPlane = std::any_cast<float>(value);
-                });
-
-            Component::addProperty<SceneCamera>(
-                "moveSpeed",
-                "float",
-                [](Component *component) {
-                    return static_cast<SceneCamera *>(component)->moveSpeed;
-                },
-                [](Component *component, const std::any &value) {
-                    static_cast<SceneCamera *>(component)->moveSpeed = std::any_cast<float>(value);
-                });
-
-            Component::addProperty<SceneCamera>(
-                "mouseSensitivity",
-                "float",
-                [](Component *component) {
-                    return static_cast<SceneCamera *>(component)->mouseSensitivity;
-                },
-                [](Component *component, const std::any &value) {
-                    static_cast<SceneCamera *>(component)->mouseSensitivity = std::any_cast<float>(value);
-                });
-
+            ME_ADD_PROPERTY(SceneCamera, fovDegrees, "float");
+            ME_ADD_PROPERTY(SceneCamera, nearPlane, "float");
+            ME_ADD_PROPERTY(SceneCamera, farPlane, "float");
+            ME_ADD_PROPERTY(SceneCamera, moveSpeed, "float");
+            ME_ADD_PROPERTY(SceneCamera, mouseSensitivity, "float");
             return true;
         }();
     }

@@ -73,3 +73,15 @@ namespace mini_engine {
     };
 }
 
+#define ME_ADD_PROPERTY(ComponentType, memberName, typeName)                                          \
+    ::mini_engine::Component::addProperty<ComponentType>(                                             \
+        #memberName,                                                                                  \
+        typeName,                                                                                     \
+        [](::mini_engine::Component *component) {                                                     \
+            return static_cast<ComponentType *>(component)->memberName;                               \
+        },                                                                                            \
+        [](::mini_engine::Component *component, const std::any &value) {                               \
+            using MemberT = decltype(ComponentType::memberName);                                      \
+            static_cast<ComponentType *>(component)->memberName = std::any_cast<MemberT>(value);      \
+        })
+
