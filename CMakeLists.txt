@@ -22,3 +22,8 @@ add_subdirectory(external/glm)
 
 add_subdirectory(core)
 add_subdirectory(engine)
+
+# Shared PCH: build once for core, reuse in engine (same compiler flags).
+target_link_libraries(core PUBLIC glm::glm imgui::imgui)
+target_precompile_headers(core PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/pch.h")
+target_precompile_headers(engine REUSE_FROM core)
