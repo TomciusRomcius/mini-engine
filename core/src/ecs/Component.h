@@ -22,6 +22,15 @@ namespace mini_engine {
         virtual void start() {}
         virtual void update() {}
 
+        [[nodiscard]] virtual const char *getTypeName() const {
+            return "Component";
+        }
+
+        [[nodiscard]] virtual const std::vector<IProperty> &exposedProperties() const {
+            static const std::vector<IProperty> empty;
+            return empty;
+        }
+
         template<typename T>
         static void addProperty(
             std::string propName,

@@ -12,6 +12,14 @@ namespace mini_engine {
         glm::vec3 scale{1.0f};
         glm::vec3 rotation{0.0f};
 
+        [[nodiscard]] const char *getTypeName() const override {
+            return "Transform";
+        }
+
+        [[nodiscard]] const std::vector<IProperty> &exposedProperties() const override {
+            return getProperties<Transform>();
+        }
+
         [[nodiscard]] glm::mat4 getModelMatrix() const {
             glm::mat4 model(1.0f);
             model = glm::translate(model, position);

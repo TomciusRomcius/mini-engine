@@ -2,6 +2,7 @@ add_executable(engine
         main.cpp
         Application.cpp
         Application.h
+        components/Transform.cpp
         components/Transform.h
         components/Mesh.h
         components/MeshRenderer.cpp
@@ -12,7 +13,9 @@ add_executable(engine
         layers/ViewportLayer.cpp
         layers/ViewportLayer.h
         layers/SceneEntitiesSidebar.cpp
-        layers/SceneEntitiesSidebar.h)
+        layers/SceneEntitiesSidebar.h
+        layers/PropertiesSidebar.cpp
+        layers/PropertiesSidebar.h)
 
 target_include_directories(engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(engine PRIVATE core)

@@ -17,6 +17,7 @@
 #include "components/Transform.h"
 #include "ecs/Scene.h"
 #include "layers/Layer.h"
+#include "layers/PropertiesSidebar.h"
 #include "layers/SceneEntitiesSidebar.h"
 #include "layers/ViewportLayer.h"
 
@@ -50,6 +51,7 @@ namespace mini_engine {
         ImGui_ImplOpenGL3_Init("#version 330");
 
         Scene scene;
+        Entity *selectedEntity = nullptr;
 
         Entity *cameraEntity = scene.createEntity();
         auto *cameraTransform = new Transform();
@@ -80,7 +82,8 @@ namespace mini_engine {
 
         std::vector<std::unique_ptr<Layer>> layers;
         layers.push_back(std::make_unique<ViewportLayer>(scene));
-        layers.push_back(std::make_unique<SceneEntitiesSidebar>(scene));
+        layers.push_back(std::make_unique<SceneEntitiesSidebar>(scene, selectedEntity));
+        layers.push_back(std::make_unique<PropertiesSidebar>(selectedEntity));
 
         for (auto &layer: layers) {
             layer->onAttach();

@@ -2,18 +2,16 @@
 
 #include "Layer.h"
 #include "ecs/Entity.h"
-#include "ecs/Scene.h"
 
 namespace mini_engine {
-    class SceneEntitiesSidebar : public Layer {
+    class PropertiesSidebar : public Layer {
     public:
-        SceneEntitiesSidebar(Scene &scene, Entity *&selectedEntity);
+        explicit PropertiesSidebar(Entity *&selectedEntity);
 
         void onAttach() override;
         void update() override;
 
     private:
-        Scene &m_Scene;
         Entity *&m_SelectedEntity;
     };
 }

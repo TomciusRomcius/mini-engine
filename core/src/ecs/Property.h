@@ -34,7 +34,7 @@ namespace mini_engine {
             return m_Value;
         }
 
-        void setValue(Component *component, const std::any &value) {
+        void setValue(Component *component, const std::any &value) const {
             m_Value = value;
             if (m_Setter) {
                 m_Setter(component, value);
@@ -44,7 +44,7 @@ namespace mini_engine {
     private:
         std::string m_Name;
         std::string m_Type;
-        std::any m_Value;
+        mutable std::any m_Value;
         Getter m_Getter;
         Setter m_Setter;
     };

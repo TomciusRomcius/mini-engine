@@ -20,6 +20,10 @@ namespace mini_engine {
         void addTexture(GLuint texture);
         [[nodiscard]] const std::vector<GLuint> &getTextures() const;
 
+        [[nodiscard]] const char *getTypeName() const override {
+            return "MeshRenderer";
+        }
+
     private:
         std::vector<GLuint> m_Textures;
 

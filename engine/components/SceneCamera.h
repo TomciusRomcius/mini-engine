@@ -21,6 +21,14 @@ namespace mini_engine {
         void start() override;
         void update() override;
 
+        [[nodiscard]] const char *getTypeName() const override {
+            return "SceneCamera";
+        }
+
+        [[nodiscard]] const std::vector<IProperty> &exposedProperties() const override {
+            return getProperties<SceneCamera>();
+        }
+
         [[nodiscard]] glm::mat4 getViewMatrix() const;
         [[nodiscard]] glm::mat4 getProjectionMatrix() const;
 
