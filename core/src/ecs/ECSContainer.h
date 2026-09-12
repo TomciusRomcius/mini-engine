@@ -32,6 +32,21 @@ namespace mini_engine {
             throw std::runtime_error("Component type not found on entity");
         }
 
+        template<typename T>
+        T *findComponent() {
+            static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
+
+            for (auto &[id, components]: m_Components) {
+                for (Component *component: components) {
+                    if (T *typed = dynamic_cast<T *>(component)) {
+                        return typed;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
         [[nodiscard]] const std::list<Component *> &getComponents(EntityId id) const {
             static const std::list<Component *> empty;
             const auto it = m_Components.find(id);

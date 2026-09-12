@@ -22,6 +22,11 @@ namespace mini_engine {
             glCall(glUseProgram(m_Program));
         }
 
+        void setUniformMat4(const char *name, const float *matrix) const {
+            const GLint location = glGetUniformLocation(m_Program, name);
+            glCall(glUniformMatrix4fv(location, 1, GL_FALSE, matrix));
+        }
+
     private:
         GLint m_Program;
     };

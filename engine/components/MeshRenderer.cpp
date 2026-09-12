@@ -2,8 +2,11 @@
 
 #include <stdexcept>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Debugging.h"
 #include "Mesh.h"
+#include "SceneCamera.h"
 #include "Transform.h"
 #include "ecs/ECSContainer.h"
 #include "ecs/Entity.h"
@@ -42,8 +45,8 @@ namespace mini_engine {
         m_Vao = std::make_unique<VAO>(std::vector<AttributeMemory>{positions});
         m_Ebo = std::make_unique<EBO>(mesh.indices);
 
-        const Shader vert(GL_VERTEX_SHADER, "shaders/simple.vert");
-        const Shader frag(GL_FRAGMENT_SHADER, "shaders/simple.frag");
+        const Shader vert(GL_VERTEX_SHADER, "shaders/3d.vert");
+        const Shader frag(GL_FRAGMENT_SHADER, "shaders/3d.frag");
         m_Program = std::make_unique<Program>(vert, frag);
     }
 
@@ -59,9 +62,14 @@ namespace mini_engine {
 
         ECSContainer *ecs = entity->getECSContainer();
         Transform &transform = ecs->getComponent<Transform>(entity->getId());
-        Mesh &mesh = ecs->getComponent<Mesh>(entity->getId());
-        (void)transform;
-        (void)mesh;
+        SceneCamera *camera = ecs->findComponent<SceneCamera>();
+        if (camera == nullptr) {
+            return;
+        }
+
+        const glm::mat4 model = transform.getModelMatrix();
+        const glm::mat4 view = camera->getViewMatrix();
+        const glm::mat4 proj = camera->getProjectionMatrix();
 
         for (size_t i = 0; i < m_Textures.size(); ++i) {
             glCall(glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i)));
@@ -69,6 +77,9 @@ namespace mini_engine {
         }
 
         m_Program->bind();
+        m_Program->setUniformMat4("uModel", glm::value_ptr(model));
+        m_Program->setUniformMat4("uView", glm::value_ptr(view));
+        m_Program->setUniformMat4("uProj", glm::value_ptr(proj));
         m_Vao->bind();
         glCall(glDrawElements(GL_TRIANGLES, m_Ebo->getCount(), GL_UNSIGNED_INT, nullptr));
     }

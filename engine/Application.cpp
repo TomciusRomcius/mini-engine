@@ -1,14 +1,17 @@
 #include "Application.h"
 
-#include <iostream>
 #include <stdexcept>
+#include <vector>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "Debugging.h"
-#include "EBO.h"
-#include "Program.h"
-#include "VAO.h"
+#include "components/Mesh.h"
+#include "components/MeshRenderer.h"
+#include "components/SceneCamera.h"
+#include "components/Transform.h"
+#include "ecs/Scene.h"
 
 namespace mini_engine {
     Application::Application() {
@@ -29,37 +32,45 @@ namespace mini_engine {
             throw std::runtime_error("glewInit() failed");
         }
 
-        std::vector<float> vertices = {
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f,
-        };
+        glCall(glEnable(GL_DEPTH_TEST));
 
-        std::vector<uint32_t> indices = {
+        Scene scene;
+
+        Entity *cameraEntity = scene.createEntity();
+        auto *cameraTransform = new Transform();
+        cameraTransform->position = glm::vec3(0.0f, 0.0f, 3.0f);
+        cameraEntity->getECSContainer()->addComponent(*cameraEntity, cameraTransform);
+
+        auto *camera = new SceneCamera();
+        camera->setWindow(window);
+        cameraEntity->getECSContainer()->addComponent(*cameraEntity, camera);
+
+        Entity *meshEntity = scene.createEntity();
+        auto *meshTransform = new Transform();
+        meshEntity->getECSContainer()->addComponent(*meshEntity, meshTransform);
+
+        auto *mesh = new Mesh();
+        mesh->vertices = {
+            {-0.5f, -0.5f, 0.0f},
+            { 0.5f, -0.5f, 0.0f},
+            { 0.5f,  0.5f, 0.0f},
+            {-0.5f,  0.5f, 0.0f},
+        };
+        mesh->indices = {
             0, 1, 2,
             0, 2, 3,
         };
+        meshEntity->getECSContainer()->addComponent(*meshEntity, mesh);
+        meshEntity->getECSContainer()->addComponent(*meshEntity, new MeshRenderer());
 
-        const AttributeMemory mem(vertices.data(), GL_FLOAT, vertices.size(), 3, false);
-        const VBO vbo({mem});
-        vbo.bind();
-        const VAO vao({mem});
-        const EBO ebo(indices);
-        const Shader vert(GL_VERTEX_SHADER, "shaders/simple.vert");
-        const Shader frag(GL_FRAGMENT_SHADER, "shaders/simple.frag");
-        const Program program(
-            vert, frag
-        );
+        scene.start();
 
         while (!glfwWindowShouldClose(window)) {
             glClearColor(1, 1, 0.8, 1);
-            glCall(glClear(GL_COLOR_BUFFER_BIT));
+            glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-            program.bind();
-            vao.bind();
+            scene.update();
 
-            glCall(glDrawElements(GL_TRIANGLES, ebo.getCount(), GL_UNSIGNED_INT, nullptr));
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
