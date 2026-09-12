@@ -3,6 +3,9 @@
 #include <imgui.h>
 
 #include "Debugging.h"
+#include "components/SceneCamera.h"
+#include "ecs/ECSContainer.h"
+#include "ecs/Entity.h"
 
 namespace mini_engine {
     ViewportLayer::ViewportLayer(Scene &scene) : m_Scene(scene) {}
@@ -68,6 +71,18 @@ namespace mini_engine {
         const int width = static_cast<int>(size.x);
         const int height = static_cast<int>(size.y);
         resize(width, height);
+
+        for (Entity *entity: m_Scene.getEntities()) {
+            ECSContainer *ecs = entity->getECSContainer();
+            if (ecs == nullptr) {
+                continue;
+            }
+            if (SceneCamera *camera = ecs->findComponent<SceneCamera>()) {
+                camera->viewportWidth = m_Width;
+                camera->viewportHeight = m_Height;
+                break;
+            }
+        }
 
         if (m_Fbo != 0 && m_Width > 0 && m_Height > 0) {
             GLint previousViewport[4] = {};

@@ -13,6 +13,8 @@ namespace mini_engine {
         float farPlane = 100.0f;
         float moveSpeed = 5.0f;
         float mouseSensitivity = 0.1f;
+        int viewportWidth = 1;
+        int viewportHeight = 1;
 
         void setWindow(GLFWwindow *window);
 

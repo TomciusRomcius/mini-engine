@@ -44,14 +44,8 @@ namespace mini_engine {
     }
 
     glm::mat4 SceneCamera::getProjectionMatrix() const {
-        int width = 1;
-        int height = 1;
-        if (m_Window != nullptr) {
-            glfwGetFramebufferSize(m_Window, &width, &height);
-        }
-
-        const float aspect = height > 0
-            ? static_cast<float>(width) / static_cast<float>(height)
+        const float aspect = viewportHeight > 0
+            ? static_cast<float>(viewportWidth) / static_cast<float>(viewportHeight)
             : 1.0f;
 
         return glm::perspective(glm::radians(fovDegrees), aspect, nearPlane, farPlane);
