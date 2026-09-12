@@ -11,6 +11,8 @@ namespace mini_engine {
         Entity *createEntity();
         void removeEntity(Entity *entity);
 
+        [[nodiscard]] const std::list<Entity *> &getEntities() const;
+
         void start();
         void update();
 

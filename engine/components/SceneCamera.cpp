@@ -16,15 +16,7 @@ namespace mini_engine {
     }
 
     void SceneCamera::start() {
-        glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         m_LastTime = glfwGetTime();
-
-        double x = 0.0;
-        double y = 0.0;
-        glfwGetCursorPos(m_Window, &x, &y);
-        m_LastMouseX = x;
-        m_LastMouseY = y;
-        m_FirstMouse = false;
     }
 
     glm::vec3 SceneCamera::front() const {
@@ -82,26 +74,37 @@ namespace mini_engine {
         const float deltaTime = static_cast<float>(now - m_LastTime);
         m_LastTime = now;
 
-        double mouseX = 0.0;
-        double mouseY = 0.0;
-        glfwGetCursorPos(m_Window, &mouseX, &mouseY);
+        const bool rotating = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+        if (rotating && !m_Rotating) {
+            glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            m_FirstMouse = true;
+        } else if (!rotating && m_Rotating) {
+            glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+        m_Rotating = rotating;
 
-        if (m_FirstMouse) {
+        if (rotating) {
+            double mouseX = 0.0;
+            double mouseY = 0.0;
+            glfwGetCursorPos(m_Window, &mouseX, &mouseY);
+
+            if (m_FirstMouse) {
+                m_LastMouseX = mouseX;
+                m_LastMouseY = mouseY;
+                m_FirstMouse = false;
+            }
+
+            const float offsetX = static_cast<float>(mouseX - m_LastMouseX);
+            const float offsetY = static_cast<float>(m_LastMouseY - mouseY);
             m_LastMouseX = mouseX;
             m_LastMouseY = mouseY;
-            m_FirstMouse = false;
+
+            m_Yaw += offsetX * mouseSensitivity;
+            m_Pitch += offsetY * mouseSensitivity;
+            m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f);
+
+            transform.rotation = glm::vec3(glm::radians(m_Pitch), glm::radians(m_Yaw), 0.0f);
         }
-
-        const float offsetX = static_cast<float>(mouseX - m_LastMouseX);
-        const float offsetY = static_cast<float>(m_LastMouseY - mouseY);
-        m_LastMouseX = mouseX;
-        m_LastMouseY = mouseY;
-
-        m_Yaw += offsetX * mouseSensitivity;
-        m_Pitch += offsetY * mouseSensitivity;
-        m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f);
-
-        transform.rotation = glm::vec3(glm::radians(m_Pitch), glm::radians(m_Yaw), 0.0f);
 
         const float velocity = moveSpeed * deltaTime;
         const glm::vec3 camFront = front();

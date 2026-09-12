@@ -39,6 +39,10 @@ namespace mini_engine {
         m_Entities.erase(it);
     }
 
+    const std::list<Entity *> &Scene::getEntities() const {
+        return m_Entities;
+    }
+
     void Scene::start() {
         for (Entity *entity: m_Entities) {
             for (Component *component: m_ECS.getComponents(entity->getId())) {

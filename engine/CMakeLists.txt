@@ -7,7 +7,12 @@ add_executable(engine
         components/MeshRenderer.cpp
         components/MeshRenderer.h
         components/SceneCamera.cpp
-        components/SceneCamera.h)
+        components/SceneCamera.h
+        layers/Layer.h
+        layers/ViewportLayer.cpp
+        layers/ViewportLayer.h
+        layers/SceneEntitiesSidebar.cpp
+        layers/SceneEntitiesSidebar.h)
 
 target_include_directories(engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(engine PRIVATE core)

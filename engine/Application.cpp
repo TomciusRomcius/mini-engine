@@ -1,10 +1,14 @@
 #include "Application.h"
 
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 #include "Debugging.h"
 #include "components/Mesh.h"
@@ -12,6 +16,9 @@
 #include "components/SceneCamera.h"
 #include "components/Transform.h"
 #include "ecs/Scene.h"
+#include "layers/Layer.h"
+#include "layers/SceneEntitiesSidebar.h"
+#include "layers/ViewportLayer.h"
 
 namespace mini_engine {
     Application::Application() {
@@ -33,6 +40,14 @@ namespace mini_engine {
         }
 
         glCall(glEnable(GL_DEPTH_TEST));
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO &io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        ImGui::StyleColorsDark();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init("#version 330");
 
         Scene scene;
 
@@ -63,16 +78,38 @@ namespace mini_engine {
         meshEntity->getECSContainer()->addComponent(*meshEntity, mesh);
         meshEntity->getECSContainer()->addComponent(*meshEntity, new MeshRenderer());
 
+        std::vector<std::unique_ptr<Layer>> layers;
+        layers.push_back(std::make_unique<ViewportLayer>(scene));
+        layers.push_back(std::make_unique<SceneEntitiesSidebar>(scene));
+
+        for (auto &layer: layers) {
+            layer->onAttach();
+        }
+
         scene.start();
 
         while (!glfwWindowShouldClose(window)) {
-            glClearColor(1, 1, 0.8, 1);
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+            ImGui::DockSpaceOverViewport();
+
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-            scene.update();
+            for (auto &layer: layers) {
+                layer->update();
+            }
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
     }
 }

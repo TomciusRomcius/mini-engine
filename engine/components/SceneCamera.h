@@ -32,6 +32,7 @@ namespace mini_engine {
         double m_LastMouseX = 0.0;
         double m_LastMouseY = 0.0;
         bool m_FirstMouse = true;
+        bool m_Rotating = false;
         double m_LastTime = 0.0;
     };
 }
