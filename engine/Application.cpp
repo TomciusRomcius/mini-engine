@@ -80,10 +80,12 @@ namespace mini_engine {
         meshEntity->getECSContainer()->addComponent(*meshEntity, mesh);
         meshEntity->getECSContainer()->addComponent(*meshEntity, new MeshRenderer());
 
+        selectedEntity = meshEntity;
+
         std::vector<std::unique_ptr<Layer>> layers;
-        layers.push_back(std::make_unique<ViewportLayer>(scene));
         layers.push_back(std::make_unique<SceneEntitiesSidebar>(scene, selectedEntity));
         layers.push_back(std::make_unique<PropertiesSidebar>(selectedEntity));
+        layers.push_back(std::make_unique<ViewportLayer>(scene));
 
         for (auto &layer: layers) {
             layer->onAttach();

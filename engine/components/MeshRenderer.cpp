@@ -81,6 +81,7 @@ namespace mini_engine {
         m_Program->setUniformMat4("uView", glm::value_ptr(view));
         m_Program->setUniformMat4("uProj", glm::value_ptr(proj));
         m_Vao->bind();
+        m_Ebo->bind();
         glCall(glDrawElements(GL_TRIANGLES, m_Ebo->getCount(), GL_UNSIGNED_INT, nullptr));
     }
 }

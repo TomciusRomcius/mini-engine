@@ -21,13 +21,15 @@ namespace mini_engine {
         }
 
         [[nodiscard]] glm::mat4 getModelMatrix() const {
-            glm::mat4 model(1.0f);
-            model = glm::translate(model, position);
-            model = glm::rotate(model, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-            model = glm::rotate(model, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::rotate(model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-            model = glm::scale(model, scale);
-            return model;
+            const glm::mat4 translate = glm::translate(glm::mat4(1.0f), position);
+            const glm::mat4 rotateY =
+                glm::rotate(glm::mat4(1.0f), glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            const glm::mat4 rotateX =
+                glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            const glm::mat4 rotateZ =
+                glm::rotate(glm::mat4(1.0f), glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+            const glm::mat4 scaling = glm::scale(glm::mat4(1.0f), scale);
+            return translate * rotateY * rotateX * rotateZ * scaling;
         }
     };
 }

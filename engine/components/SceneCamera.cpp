@@ -154,7 +154,7 @@ namespace mini_engine {
             m_Pitch += offsetY * mouseSensitivity;
             m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f);
 
-            transform.rotation = glm::vec3(glm::radians(m_Pitch), glm::radians(m_Yaw), 0.0f);
+            transform.rotation = glm::vec3(m_Pitch, m_Yaw, 0.0f);
         }
 
         const float velocity = moveSpeed * deltaTime;
