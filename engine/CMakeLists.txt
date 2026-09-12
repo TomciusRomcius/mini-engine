@@ -1,9 +1,14 @@
 add_executable(engine
         main.cpp
         Application.cpp
-        Application.h)
+        Application.h
+        components/Transform.h
+        components/Mesh.h
+        components/MeshRenderer.cpp
+        components/MeshRenderer.h)
 
-target_link_libraries(engine PRIVATE core)
+target_include_directories(engine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(engine PRIVATE core glm::glm)
 
 add_custom_command(
         TARGET engine POST_BUILD
