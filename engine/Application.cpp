@@ -54,7 +54,7 @@ namespace mini_engine {
         Scene scene;
         Entity *selectedEntity = nullptr;
 
-        Entity *cameraEntity = scene.createEntity();
+        Entity *cameraEntity = scene.createEntity("Camera");
         auto *cameraTransform = new Transform();
         cameraTransform->position = glm::vec3(0.0f, 0.0f, 3.0f);
         cameraEntity->getECSContainer()->addComponent(*cameraEntity, cameraTransform);
@@ -63,7 +63,7 @@ namespace mini_engine {
         camera->setWindow(window);
         cameraEntity->getECSContainer()->addComponent(*cameraEntity, camera);
 
-        Entity *cubeEntity = scene.createEntity();
+        Entity *cubeEntity = scene.createEntity("Cube");
         auto *cubeTransform = new Transform();
         cubeEntity->getECSContainer()->addComponent(*cubeEntity, cubeTransform);
 
@@ -107,7 +107,7 @@ namespace mini_engine {
         cubeEntity->getECSContainer()->addComponent(*cubeEntity, cube);
         cubeEntity->getECSContainer()->addComponent(*cubeEntity, new MeshRenderer());
 
-        Entity *lightEntity = scene.createEntity();
+        Entity *lightEntity = scene.createEntity("Light");
         auto *lightTransform = new Transform();
         lightTransform->position = glm::vec3(1.5f, 1.5f, 1.5f);
         lightEntity->getECSContainer()->addComponent(*lightEntity, lightTransform);

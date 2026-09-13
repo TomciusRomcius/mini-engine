@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <utility>
 
 namespace mini_engine {
     void Scene::addEntity(Entity *entity) {
@@ -20,6 +21,13 @@ namespace mini_engine {
 
     Entity *Scene::createEntity() {
         Entity *entity = new Entity();
+        addEntity(entity);
+        m_ECS.registerEntity(entity->getId());
+        return entity;
+    }
+
+    Entity *Scene::createEntity(std::string name) {
+        Entity *entity = new Entity(std::move(name));
         addEntity(entity);
         m_ECS.registerEntity(entity->getId());
         return entity;

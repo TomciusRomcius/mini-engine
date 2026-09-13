@@ -111,7 +111,8 @@ namespace mini_engine {
             return;
         }
 
-        ImGui::Text("Entity %llu", static_cast<unsigned long long>(m_SelectedEntity->getId()));
+        ImGui::Text("%s", m_SelectedEntity->getName().c_str());
+        ImGui::TextDisabled("id %llu", static_cast<unsigned long long>(m_SelectedEntity->getId()));
         ImGui::Separator();
 
         for (Component *component: ecs->getComponents(m_SelectedEntity->getId())) {

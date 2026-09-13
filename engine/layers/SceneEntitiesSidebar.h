@@ -13,7 +13,10 @@ namespace mini_engine {
         void update() override;
 
     private:
+        static constexpr size_t kEntityNameMaxSize = 64;
+
         Scene &m_Scene;
         Entity *&m_SelectedEntity;
+        char m_EntityName[kEntityNameMaxSize]{};
     };
 }
