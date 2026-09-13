@@ -11,6 +11,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include "Debugging.h"
+#include "components/Light.h"
 #include "components/Mesh.h"
 #include "components/MeshRenderer.h"
 #include "components/SceneCamera.h"
@@ -79,6 +80,7 @@ namespace mini_engine {
         };
         meshEntity->getECSContainer()->addComponent(*meshEntity, mesh);
         meshEntity->getECSContainer()->addComponent(*meshEntity, new MeshRenderer());
+        meshEntity->getECSContainer()->addComponent(*meshEntity, new Light());
 
         selectedEntity = meshEntity;
 

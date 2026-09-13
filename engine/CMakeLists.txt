@@ -9,6 +9,8 @@ add_executable(engine
         components/MeshRenderer.h
         components/SceneCamera.cpp
         components/SceneCamera.h
+        components/Light.h
+        components/Light.cpp
         layers/Layer.h
         layers/ViewportLayer.cpp
         layers/ViewportLayer.h

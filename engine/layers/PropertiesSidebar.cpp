@@ -62,6 +62,32 @@ namespace mini_engine {
 
             ImGui::Text("%s (%s)", name.c_str(), type.c_str());
         }
+
+        void drawProperties(const std::vector<IProperty> &properties) {
+            for (const IProperty &property: properties) {
+                ImGui::PushID(property.getName().c_str());
+                drawProperty(property);
+                ImGui::PopID();
+            }
+        }
+
+        void drawTabGroup(const PropertyTabGroup &tabGroup) {
+            if (!ImGui::BeginTabBar(tabGroup.getName().c_str())) {
+                return;
+            }
+
+            const std::string current = tabGroup.getCurrentTab();
+            for (const std::string &tab: tabGroup.getTabs()) {
+                if (ImGui::BeginTabItem(tab.c_str())) {
+                    if (tab != current) {
+                        tabGroup.selectTab(tab);
+                    }
+                    ImGui::EndTabItem();
+                }
+            }
+
+            ImGui::EndTabBar();
+        }
     }
 
     PropertiesSidebar::PropertiesSidebar(Entity *&selectedEntity)
@@ -94,16 +120,31 @@ namespace mini_engine {
             }
 
             if (ImGui::CollapsingHeader(component->getTypeName(), ImGuiTreeNodeFlags_DefaultOpen)) {
+                ImGui::PushID(component);
+
                 const std::vector<IProperty> &properties = component->getProperties();
-                if (properties.empty()) {
+                const std::vector<PropertyTabGroup> &tabGroups = component->getPropertyTabGroups();
+
+                if (properties.empty() && tabGroups.empty() && component->getPropertyGroups().empty()) {
                     ImGui::TextDisabled("No exposed properties");
                 } else {
-                    for (const IProperty &property: properties) {
-                        ImGui::PushID(property.getName().c_str());
-                        drawProperty(property);
+                    drawProperties(properties);
+
+                    for (const PropertyTabGroup &tabGroup: tabGroups) {
+                        ImGui::PushID(tabGroup.getName().c_str());
+                        drawTabGroup(tabGroup);
+                        ImGui::PopID();
+                    }
+
+                    for (const PropertyGroup &group: component->getPropertyGroups()) {
+                        ImGui::PushID(group.getName().c_str());
+                        ImGui::SeparatorText(group.getName().c_str());
+                        drawProperties(group.getProperties());
                         ImGui::PopID();
                     }
                 }
+
+                ImGui::PopID();
             }
         }
 

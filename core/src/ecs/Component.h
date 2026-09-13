@@ -9,24 +9,9 @@
 #include "Property.h"
 
 namespace mini_engine {
-    class Component {
+    class PropertyBag {
     public:
-        virtual ~Component() = default;
-
-        void SetEntity(Entity *entity) {
-            m_Entity = entity;
-        }
-
-        [[nodiscard]] Entity *getEntity() const {
-            return m_Entity;
-        }
-
-        virtual void start() {}
-        virtual void update() {}
-
-        [[nodiscard]] virtual const char *getTypeName() const {
-            return "Component";
-        }
+        virtual ~PropertyBag() = default;
 
         void addProperty(
             std::string propName,
@@ -65,8 +50,76 @@ namespace mini_engine {
         }
 
     private:
-        Entity *m_Entity = nullptr;
         std::vector<IProperty> m_Properties;
+    };
+
+    class Component : public PropertyBag {
+    public:
+        ~Component() override = default;
+
+        void SetEntity(Entity *entity) {
+            m_Entity = entity;
+        }
+
+        [[nodiscard]] Entity *getEntity() const {
+            return m_Entity;
+        }
+
+        virtual void start() {}
+        virtual void update() {}
+
+        [[nodiscard]] virtual const char *getTypeName() const {
+            return "Component";
+        }
+
+        void addPropertyGroup(std::string name, std::vector<IProperty> properties) {
+            removePropertyGroupIfExists(name);
+            m_PropertyGroups.emplace_back(std::move(name), std::move(properties));
+        }
+
+        void removePropertyGroupIfExists(const std::string &name) {
+            for (auto it = m_PropertyGroups.begin(); it != m_PropertyGroups.end(); ++it) {
+                if (it->getName() == name) {
+                    m_PropertyGroups.erase(it);
+                    return;
+                }
+            }
+        }
+
+        [[nodiscard]] const std::vector<PropertyGroup> &getPropertyGroups() const {
+            return m_PropertyGroups;
+        }
+
+        void addPropertyTabGroup(
+            std::string name,
+            std::vector<std::string> tabs,
+            PropertyTabGroup::TabChangedCallback onTabChanged,
+            PropertyTabGroup::CurrentTabGetter getCurrentTab) {
+            for (PropertyTabGroup &tabGroup: m_PropertyTabGroups) {
+                if (tabGroup.getName() == name) {
+                    tabGroup = PropertyTabGroup(
+                        std::move(name),
+                        std::move(tabs),
+                        std::move(onTabChanged),
+                        std::move(getCurrentTab));
+                    return;
+                }
+            }
+            m_PropertyTabGroups.emplace_back(
+                std::move(name),
+                std::move(tabs),
+                std::move(onTabChanged),
+                std::move(getCurrentTab));
+        }
+
+        [[nodiscard]] const std::vector<PropertyTabGroup> &getPropertyTabGroups() const {
+            return m_PropertyTabGroups;
+        }
+
+    private:
+        Entity *m_Entity = nullptr;
+        std::vector<PropertyGroup> m_PropertyGroups;
+        std::vector<PropertyTabGroup> m_PropertyTabGroups;
     };
 }
 
