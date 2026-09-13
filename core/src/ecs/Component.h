@@ -1,6 +1,8 @@
 #pragma once
 
+#include <any>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "Entity.h"
@@ -26,30 +28,22 @@ namespace mini_engine {
             return "Component";
         }
 
-        [[nodiscard]] virtual const std::vector<IProperty> &exposedProperties() const {
-            static const std::vector<IProperty> empty;
-            return empty;
-        }
-
-        template<typename T>
-        static void addProperty(
+        void addProperty(
             std::string propName,
             std::string propType,
             IProperty::Getter getter = {},
             IProperty::Setter setter = {}) {
-            std::vector<IProperty> &properties = propertyRegistry<T>();
-            for (IProperty &property: properties) {
+            for (IProperty &property: m_Properties) {
                 if (property.getName() == propName) {
                     property = IProperty(std::move(propName), std::move(propType), std::move(getter), std::move(setter));
                     return;
                 }
             }
-            properties.emplace_back(std::move(propName), std::move(propType), std::move(getter), std::move(setter));
+            m_Properties.emplace_back(std::move(propName), std::move(propType), std::move(getter), std::move(setter));
         }
 
-        template<typename T>
-        [[nodiscard]] static IProperty *getProperty(const std::string &propName) {
-            for (IProperty &property: propertyRegistry<T>()) {
+        [[nodiscard]] IProperty *getProperty(const std::string &propName) {
+            for (IProperty &property: m_Properties) {
                 if (property.getName() == propName) {
                     return &property;
                 }
@@ -57,31 +51,33 @@ namespace mini_engine {
             return nullptr;
         }
 
-        template<typename T>
-        [[nodiscard]] static const std::vector<IProperty> &getProperties() {
-            return propertyRegistry<T>();
+        [[nodiscard]] const IProperty *getProperty(const std::string &propName) const {
+            for (const IProperty &property: m_Properties) {
+                if (property.getName() == propName) {
+                    return &property;
+                }
+            }
+            return nullptr;
+        }
+
+        [[nodiscard]] const std::vector<IProperty> &getProperties() const {
+            return m_Properties;
         }
 
     private:
-        template<typename T>
-        static std::vector<IProperty> &propertyRegistry() {
-            static std::vector<IProperty> properties;
-            return properties;
-        }
-
         Entity *m_Entity = nullptr;
+        std::vector<IProperty> m_Properties;
     };
 }
 
-#define ME_ADD_PROPERTY(ComponentType, memberName, typeName)                                          \
-    ::mini_engine::Component::addProperty<ComponentType>(                                             \
+#define ME_ADD_PROPERTY(memberName, typeName)                                                         \
+    addProperty(                                                                                      \
         #memberName,                                                                                  \
         typeName,                                                                                     \
-        [](::mini_engine::Component *component) {                                                     \
-            return static_cast<ComponentType *>(component)->memberName;                               \
+        [this]() -> std::any {                                                                        \
+            return this->memberName;                                                                  \
         },                                                                                            \
-        [](::mini_engine::Component *component, const std::any &value) {                               \
-            using MemberT = decltype(ComponentType::memberName);                                      \
-            static_cast<ComponentType *>(component)->memberName = std::any_cast<MemberT>(value);      \
+        [this](const std::any &value) {                                                               \
+            using MemberT = std::decay_t<decltype(this->memberName)>;                                 \
+            this->memberName = std::any_cast<MemberT>(value);                                         \
         })
-

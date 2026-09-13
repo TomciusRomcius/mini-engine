@@ -12,15 +12,12 @@
 #include "ecs/Entity.h"
 
 namespace mini_engine {
-    namespace {
-        const bool g_SceneCameraPropertiesRegistered = [] {
-            ME_ADD_PROPERTY(SceneCamera, fovDegrees, "float");
-            ME_ADD_PROPERTY(SceneCamera, nearPlane, "float");
-            ME_ADD_PROPERTY(SceneCamera, farPlane, "float");
-            ME_ADD_PROPERTY(SceneCamera, moveSpeed, "float");
-            ME_ADD_PROPERTY(SceneCamera, mouseSensitivity, "float");
-            return true;
-        }();
+    SceneCamera::SceneCamera() {
+        ME_ADD_PROPERTY(fovDegrees, "float");
+        ME_ADD_PROPERTY(nearPlane, "float");
+        ME_ADD_PROPERTY(farPlane, "float");
+        ME_ADD_PROPERTY(moveSpeed, "float");
+        ME_ADD_PROPERTY(mouseSensitivity, "float");
     }
 
     void SceneCamera::setWindow(GLFWwindow *window) {

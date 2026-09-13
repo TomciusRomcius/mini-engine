@@ -6,12 +6,10 @@
 #include <utility>
 
 namespace mini_engine {
-    class Component;
-
     class IProperty {
     public:
-        using Getter = std::function<std::any(Component *)>;
-        using Setter = std::function<void(Component *, const std::any &)>;
+        using Getter = std::function<std::any()>;
+        using Setter = std::function<void(const std::any &)>;
 
         IProperty(std::string name, std::string type, Getter getter = {}, Setter setter = {})
             : m_Name(std::move(name)),
@@ -27,17 +25,17 @@ namespace mini_engine {
             return m_Type;
         }
 
-        [[nodiscard]] std::any getValue(Component *component) const {
+        [[nodiscard]] std::any getValue() const {
             if (m_Getter) {
-                return m_Getter(component);
+                return m_Getter();
             }
             return m_Value;
         }
 
-        void setValue(Component *component, const std::any &value) const {
+        void setValue(const std::any &value) const {
             m_Value = value;
             if (m_Setter) {
-                m_Setter(component, value);
+                m_Setter(value);
             }
         }
 

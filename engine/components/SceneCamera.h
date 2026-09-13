@@ -8,6 +8,8 @@
 namespace mini_engine {
     class SceneCamera : public Component {
     public:
+        SceneCamera();
+
         float fovDegrees = 60.0f;
         float nearPlane = 0.1f;
         float farPlane = 100.0f;
@@ -23,10 +25,6 @@ namespace mini_engine {
 
         [[nodiscard]] const char *getTypeName() const override {
             return "SceneCamera";
-        }
-
-        [[nodiscard]] const std::vector<IProperty> &exposedProperties() const override {
-            return getProperties<SceneCamera>();
         }
 
         [[nodiscard]] glm::mat4 getViewMatrix() const;

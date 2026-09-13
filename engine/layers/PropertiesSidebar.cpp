@@ -12,15 +12,15 @@
 
 namespace mini_engine {
     namespace {
-        void drawProperty(const IProperty &property, Component *component) {
+        void drawProperty(const IProperty &property) {
             const std::string &type = property.getType();
             const std::string &name = property.getName();
-            std::any value = property.getValue(component);
+            std::any value = property.getValue();
 
             if (type == "float") {
                 float edited = std::any_cast<float>(value);
                 if (ImGui::DragFloat(name.c_str(), &edited)) {
-                    property.setValue(component, edited);
+                    property.setValue(edited);
                 }
                 return;
             }
@@ -28,7 +28,7 @@ namespace mini_engine {
             if (type == "int") {
                 int edited = std::any_cast<int>(value);
                 if (ImGui::DragInt(name.c_str(), &edited)) {
-                    property.setValue(component, edited);
+                    property.setValue(edited);
                 }
                 return;
             }
@@ -36,7 +36,7 @@ namespace mini_engine {
             if (type == "bool") {
                 bool edited = std::any_cast<bool>(value);
                 if (ImGui::Checkbox(name.c_str(), &edited)) {
-                    property.setValue(component, edited);
+                    property.setValue(edited);
                 }
                 return;
             }
@@ -47,7 +47,7 @@ namespace mini_engine {
                 const size_t copyCount = edited.size() < sizeof(buffer) - 1 ? edited.size() : sizeof(buffer) - 1;
                 edited.copy(buffer, copyCount);
                 if (ImGui::InputText(name.c_str(), buffer, sizeof(buffer))) {
-                    property.setValue(component, std::string(buffer));
+                    property.setValue(std::string(buffer));
                 }
                 return;
             }
@@ -55,7 +55,7 @@ namespace mini_engine {
             if (type == "vec3") {
                 glm::vec3 edited = std::any_cast<glm::vec3>(value);
                 if (ImGui::DragFloat3(name.c_str(), &edited.x)) {
-                    property.setValue(component, edited);
+                    property.setValue(edited);
                 }
                 return;
             }
@@ -94,13 +94,13 @@ namespace mini_engine {
             }
 
             if (ImGui::CollapsingHeader(component->getTypeName(), ImGuiTreeNodeFlags_DefaultOpen)) {
-                const std::vector<IProperty> &properties = component->exposedProperties();
+                const std::vector<IProperty> &properties = component->getProperties();
                 if (properties.empty()) {
                     ImGui::TextDisabled("No exposed properties");
                 } else {
                     for (const IProperty &property: properties) {
                         ImGui::PushID(property.getName().c_str());
-                        drawProperty(property, component);
+                        drawProperty(property);
                         ImGui::PopID();
                     }
                 }
