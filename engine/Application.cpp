@@ -63,26 +63,65 @@ namespace mini_engine {
         camera->setWindow(window);
         cameraEntity->getECSContainer()->addComponent(*cameraEntity, camera);
 
-        Entity *meshEntity = scene.createEntity();
-        auto *meshTransform = new Transform();
-        meshEntity->getECSContainer()->addComponent(*meshEntity, meshTransform);
+        Entity *cubeEntity = scene.createEntity();
+        auto *cubeTransform = new Transform();
+        cubeEntity->getECSContainer()->addComponent(*cubeEntity, cubeTransform);
 
-        auto *mesh = new Mesh();
-        mesh->vertices = {
-            {-0.5f, -0.5f, 0.0f},
-            { 0.5f, -0.5f, 0.0f},
-            { 0.5f,  0.5f, 0.0f},
-            {-0.5f,  0.5f, 0.0f},
+        auto *cube = new Mesh();
+        cube->vertices = {
+            // Front (+Z)
+            {-0.5f, -0.5f,  0.5f}, { 0.5f, -0.5f,  0.5f}, { 0.5f,  0.5f,  0.5f}, {-0.5f,  0.5f,  0.5f},
+            // Back (-Z)
+            { 0.5f, -0.5f, -0.5f}, {-0.5f, -0.5f, -0.5f}, {-0.5f,  0.5f, -0.5f}, { 0.5f,  0.5f, -0.5f},
+            // Left (-X)
+            {-0.5f, -0.5f, -0.5f}, {-0.5f, -0.5f,  0.5f}, {-0.5f,  0.5f,  0.5f}, {-0.5f,  0.5f, -0.5f},
+            // Right (+X)
+            { 0.5f, -0.5f,  0.5f}, { 0.5f, -0.5f, -0.5f}, { 0.5f,  0.5f, -0.5f}, { 0.5f,  0.5f,  0.5f},
+            // Top (+Y)
+            {-0.5f,  0.5f,  0.5f}, { 0.5f,  0.5f,  0.5f}, { 0.5f,  0.5f, -0.5f}, {-0.5f,  0.5f, -0.5f},
+            // Bottom (-Y)
+            {-0.5f, -0.5f, -0.5f}, { 0.5f, -0.5f, -0.5f}, { 0.5f, -0.5f,  0.5f}, {-0.5f, -0.5f,  0.5f},
         };
-        mesh->indices = {
-            0, 1, 2,
-            0, 2, 3,
+        cube->normals = {
+            // Front
+            {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f},
+            // Back
+            {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, -1.0f},
+            // Left
+            {-1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f},
+            // Right
+            {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f},
+            // Top
+            {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f},
+            // Bottom
+            {0.0f, -1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, {0.0f, -1.0f, 0.0f},
         };
-        meshEntity->getECSContainer()->addComponent(*meshEntity, mesh);
-        meshEntity->getECSContainer()->addComponent(*meshEntity, new MeshRenderer());
-        meshEntity->getECSContainer()->addComponent(*meshEntity, new Light());
+        cube->indices = {
+            0,  1,  2,  0,  2,  3,
+            4,  5,  6,  4,  6,  7,
+            8,  9, 10,  8, 10, 11,
+            12, 13, 14, 12, 14, 15,
+            16, 17, 18, 16, 18, 19,
+            20, 21, 22, 20, 22, 23,
+        };
+        cubeEntity->getECSContainer()->addComponent(*cubeEntity, cube);
+        cubeEntity->getECSContainer()->addComponent(*cubeEntity, new MeshRenderer());
 
-        selectedEntity = meshEntity;
+        Entity *lightEntity = scene.createEntity();
+        auto *lightTransform = new Transform();
+        lightTransform->position = glm::vec3(1.5f, 1.5f, 1.5f);
+        lightEntity->getECSContainer()->addComponent(*lightEntity, lightTransform);
+
+        auto *light = new Light();
+        light->color = glm::vec3(1.0f, 0.95f, 0.85f);
+        light->intensity = 1.5f;
+        light->lightType = "point";
+        light->light = std::make_unique<PointLight>();
+        light->removePropertyGroupIfExists("light");
+        light->addPropertyGroup("light", light->light->getProperties());
+        lightEntity->getECSContainer()->addComponent(*lightEntity, light);
+
+        selectedEntity = cubeEntity;
 
         std::vector<std::unique_ptr<Layer>> layers;
         layers.push_back(std::make_unique<SceneEntitiesSidebar>(scene, selectedEntity));

@@ -47,6 +47,19 @@ namespace mini_engine {
             return nullptr;
         }
 
+        template<typename T, typename Fn>
+        void forEachComponent(Fn &&fn) {
+            static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
+
+            for (auto &[id, components]: m_Components) {
+                for (Component *component: components) {
+                    if (T *typed = dynamic_cast<T *>(component)) {
+                        fn(id, *typed);
+                    }
+                }
+            }
+        }
+
         [[nodiscard]] const std::list<Component *> &getComponents(EntityId id) const {
             static const std::list<Component *> empty;
             const auto it = m_Components.find(id);

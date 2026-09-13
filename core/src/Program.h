@@ -27,6 +27,31 @@ namespace mini_engine {
             glCall(glUniformMatrix4fv(location, 1, GL_FALSE, matrix));
         }
 
+        void setUniformInt(const char *name, int value) const {
+            const GLint location = glGetUniformLocation(m_Program, name);
+            glCall(glUniform1i(location, value));
+        }
+
+        void setUniformFloat(const char *name, float value) const {
+            const GLint location = glGetUniformLocation(m_Program, name);
+            glCall(glUniform1f(location, value));
+        }
+
+        void setUniformVec3(const char *name, const float *value) const {
+            const GLint location = glGetUniformLocation(m_Program, name);
+            glCall(glUniform3fv(location, 1, value));
+        }
+
+        void setUniformVec3Array(const char *name, const float *values, int count) const {
+            const GLint location = glGetUniformLocation(m_Program, name);
+            glCall(glUniform3fv(location, count, values));
+        }
+
+        void setUniformFloatArray(const char *name, const float *values, int count) const {
+            const GLint location = glGetUniformLocation(m_Program, name);
+            glCall(glUniform1fv(location, count, values));
+        }
+
     private:
         GLint m_Program;
     };

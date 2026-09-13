@@ -14,10 +14,14 @@ namespace mini_engine {
             size_t offset = 0;
             for (int i = 0; i < attributeLayouts.size(); i++) {
                 glCall(
-                    glVertexAttribPointer(i, 3, GL_FLOAT, attributeLayouts[i].isNormalized(), attributeLayouts[i].
-                        getStride(),
+                    glVertexAttribPointer(
+                        i,
+                        attributeLayouts[i].getElementPerVert(),
+                        GL_FLOAT,
+                        attributeLayouts[i].isNormalized(),
+                        attributeLayouts[i].getStride(),
                         reinterpret_cast<void *>(offset)));
-                glCall(glEnableVertexAttribArray(0));
+                glCall(glEnableVertexAttribArray(i));
                 offset += attributeLayouts[i].getSizeBytes();
             }
         }
